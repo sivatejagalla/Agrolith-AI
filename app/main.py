@@ -83,6 +83,11 @@ def create_application() -> FastAPI:
     async def openapi_json_root():
         return application.openapi()
 
+    # Favicon endpoint to avoid 404 logs
+    @application.get("/favicon.ico", include_in_schema=False)
+    async def favicon_endpoint():
+        return JSONResponse(status_code=204, content={})
+
     # Root and Health check endpoints
     @application.get("/", tags=["Health"])
     @application.get("/health", tags=["Health"])
