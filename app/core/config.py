@@ -32,8 +32,9 @@ class Settings(BaseSettings):
     SUPPORTED_LANGUAGES: Union[List[str], str] = ["en", "hi", "te", "ta", "mr"]
 
     # WhatsApp Cloud API Settings
-    WHATSAPP_TOKEN: str = ""
-    PHONE_NUMBER_ID: str = ""
+    WHATSAPP_TOKEN: str = "EAATCy9hfI2EBSDfWZAPnr00LXKk5rmmKrvxkWjHAuy2BAZCdGdipafQ1178dGH4JB4Rf5L4Ci814bzuLGTT0YfWl0LFjbT8GGdQmWA021KZAA2lZBhoVXhKAZCyWLFNvij51i0bxBHpL98vmHxEHvYITPlfnhVcZBWbf7DMvj4LtDWBCor3tUSZAZCPkYDN9dFG7snBG1RVsSLbGTYjEiXgGYY9PZAxkkMtq4IKzbIhcW4KiIry2d7OtROSdXUL0hqQhpOQp7qki9Obf7DuFZBLu0OdGKckkU2iq1fUOW9IwZDZD"
+    PHONE_NUMBER_ID: str = "1304530269391766"
+    WHATSAPP_BUSINESS_ACCOUNT_ID: str = "2337600170101896"
     VERIFY_TOKEN: str = "agrolith_whatsapp_verify_token_2026"
     WHATSAPP_PHONE_NUMBER: str = "919000000000"
 
