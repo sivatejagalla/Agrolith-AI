@@ -1,160 +1,225 @@
-# 🌾 Agrolith-AI Backend & WhatsApp AI Assistant
+<div align="center">
 
-**Agrolith-AI** is an intelligent FastAPI-based backend and WhatsApp AI Assistant that empowers Indian farmers with:
+# 🌾 Agrolith-AI — AI-Powered Smart Farming Assistant
 
-- 📱 **WhatsApp AI Assistant** — Complete Meta WhatsApp Cloud API integration (Text, Crop Images, Voice Notes, Documents)
-- 🤖 **Gemini AI Advisory** — Multilingual farmer Q&A with contextual, organic-farming guidance
-- 🔬 **Crop Disease Detection** — AI Vision analysis of plant images (Gemini Vision)
-- 🌦️ **Live Weather Advisory** — GPS-based weather data via Open-Meteo API
-- 💰 **Mandi Market Prices** — Real-time crop price data with selling advisory
-- 🏛️ **Government Scheme Advisor** — Matches PM-KISAN, PMFBY, KCC, PKVY and more
-- 🌱 **Soil Health Analysis** — pH interpretation, deficiency detection, organic amendments
-- 🧬 **Bio-Input Recommendations** — Trichoderma, Azospirillum, Neem Oil, and more
-- 🗣️ **Voice TTS/STT** — Multi-language speech synthesis (gTTS) and Gemini-based transcription
-- 🌐 **5 Languages** — English, Hindi, Telugu, Tamil, Marathi with auto-detection
+[![Next.js 15](https://img.shields.io/badge/Next.js-15.0-black?logo=next.js&style=flat-square)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&style=flat-square)](https://fastapi.tiangolo.com/)
+[![Gemini AI](https://img.shields.io/badge/Gemini%20AI-1.5%20Flash-8E44AD?logo=google&style=flat-square)](https://ai.google.dev/)
+[![Meta WhatsApp](https://img.shields.io/badge/WhatsApp-Cloud%20API-25D366?logo=whatsapp&style=flat-square)](https://developers.facebook.com/docs/whatsapp)
+[![Python Pytest](https://img.shields.io/badge/Tests-27%2F27%20Passed-brightgreen?logo=pytest&style=flat-square)](https://pytest.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+
+**Agrolith-AI** is a production-grade, omnichannel smart farming platform. It combines Next.js 15, FastAPI, Gemini 1.5 AI, and Meta WhatsApp Cloud API to deliver real-time agricultural advisory, crop disease vision diagnosis, soil health calculations, and weather telemetry directly to farmers.
+
+[Live Web App](https://agrolith-ai.vercel.app) • [API Documentation](https://web-production-75741.up.railway.app/docs) • [GitHub Repository](https://github.com/sivatejagalla/Agrolith-AI)
+
+</div>
 
 ---
 
-## Project Structure
+## 🌟 Key Features
 
+- 📱 **Meta WhatsApp Cloud API Integration** — Seamless voice notes, plant photos, and text queries via Meta Webhooks.
+- 🤖 **Multilingual Gemini 1.5 Advisory** — Contextual Q&A supporting 5 Indian languages (*English, Hindi, Telugu, Tamil, Marathi*).
+- 🔬 **Crop Disease Vision Scanner** — AI vision diagnosis of leaf photos with pathogen classification and organic Neem oil protocols.
+- 🌦️ **Live Weather & Air Quality Telemetry** — Open-Meteo integration providing AQI Index, UV Index, Wind, Soil Moisture, and 5-day crop timelines.
+- 💰 **Mandi Price Intelligence** — Real-time commodity market prices with optimal selling window advisories.
+- 🏛️ **Government Schemes Portal** — Interactive eligibility checker for *PM-KISAN*, *PMFBY*, *PKVY*, and *KCC*.
+- 🌱 **Soil Health Analyzer** — Soil pH slider (4.0 – 9.5), NPK deficiency detection, and bio-amendment recommendations.
+- 🗣️ **Text-to-Speech (TTS) & Speech-to-Text (STT)** — Multi-language speech synthesis and transcription.
+
+---
+
+## 🌐 Live Production Deployments
+
+- **Production Web Application**: [https://agrolith-ai.vercel.app](https://agrolith-ai.vercel.app)
+- **Railway FastAPI Backend**: [https://web-production-75741.up.railway.app](https://web-production-75741.up.railway.app)
+- **Interactive Swagger UI**: [https://web-production-75741.up.railway.app/docs](https://web-production-75741.up.railway.app/docs)
+- **Meta WhatsApp Webhook**: `https://web-production-75741.up.railway.app/api/v1/whatsapp/webhook`
+
+---
+
+## 🏗️ Architecture Overview
+
+```text
+               +----------------------------------+
+               |        Agrolith-AI Clients       |
+               | (Next.js 15 App / WhatsApp Cloud) |
+               +----------------+-----------------+
+                                |
+                                v
+               +----------------------------------+
+               |   FastAPI Production Backend     |
+               | (ASGI Async Engine / Uvicorn)    |
+               +----------------+-----------------+
+                                |
+        +-----------------------+-----------------------+
+        |                       |                       |
+        v                       v                       v
++---------------+       +---------------+       +---------------+
+| Gemini 1.5 AI |       |  Open-Meteo   |       | Meta Webhooks |
+| Advisory/Vision|      | Weather Tele. |       | Messaging API |
++---------------+       +---------------+       +---------------+
 ```
-d:\Hackthon\
-├── app/
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── app/                        # FastAPI Application Package
 │   ├── api/
-│   │   ├── endpoints/
-│   │   │   ├── auth.py          # Registration, Login, Firebase Auth, /me
-│   │   │   ├── health.py        # Health check
-│   │   │   ├── ai.py            # AI query, TTS, STT, Weather, Bio recs, Chat history
-│   │   │   ├── agri.py          # Disease detection, Market prices, Schemes, Soil health
-│   │   │   └── whatsapp.py      # WhatsApp Cloud API Webhook Verification & Receiver
-│   │   ├── deps.py              # JWT dependency injection
-│   │   └── router.py            # Root API router
-│   ├── core/
-│   │   ├── config.py            # Pydantic settings (env-driven)
-│   │   ├── exceptions.py        # Custom exception hierarchy + handlers
-│   │   ├── firebase.py          # Firebase Admin SDK init + token verification
-│   │   ├── logger.py            # Structured logging setup
-│   │   └── security.py          # JWT creation/decoding, bcrypt hashing
-│   ├── middleware/
-│   │   └── logging_middleware.py  # Request/response timing logger
-│   ├── models/
-│   │   └── user.py              # UserModel + in-memory UserStore
-│   ├── schemas/
-│   │   ├── auth.py              # Token, UserCreate, UserResponse, HealthCheck
-│   │   ├── ai.py                # FarmerQuery, WeatherInfo, BioProduct, Chat schemas
-│   │   └── agri.py              # Disease, MarketPrice, Scheme, SoilHealth schemas
-│   ├── services/
-│   │   ├── whatsapp_service.py  # Meta Graph API client, Media downloader, Intent router
-│   │   ├── auth_service.py      # Registration, Login, Firebase token provisioning
-│   │   ├── gemini_service.py    # Gemini AI advisory generation
-│   │   ├── weather_service.py   # Open-Meteo weather API client
-│   │   ├── speech_service.py    # gTTS (TTS) + Gemini Audio (STT)
-│   │   ├── language_service.py  # Unicode language detection + Google Translate
-│   │   ├── chat_memory_service.py  # Multi-turn memory (in-memory + Firestore)
-│   │   ├── bio_recommendation_service.py  # Bio-input product catalog matching
-│   │   ├── crop_disease_service.py       # Gemini Vision disease analysis
-│   │   ├── market_price_service.py       # Mandi price data + selling advisory
-│   │   ├── government_scheme_service.py  # Gov. scheme keyword matching
-│   │   └── soil_health_service.py        # pH + deficiency + amendment advisory
-│   └── main.py                  # FastAPI app factory with lifespan
-├── alembic/                     # Database migration scripts
-├── frontend/                    # Production Flutter Frontend App
-├── tests/                       # Automated pytest suite (agri, ai, auth, health, whatsapp)
-├── Dockerfile
-├── docker-compose.yml
-├── .env.example
-├── requirements.txt
-└── README.md
+│   │   ├── endpoints/          # API Routers (ai, agri, whatsapp, auth, health)
+│   │   └── router.py           # Root API Router
+│   ├── core/                   # Configuration, Logger, JWT Security
+│   ├── models/                 # Database & Data Models
+│   ├── schemas/                # Pydantic Input/Output Schemas
+│   ├── services/               # Gemini AI, Speech, WhatsApp, Weather Services
+│   └── main.py                 # FastAPI Application Entry Point
+├── app/ (Next.js App Router)   # Frontend App Directory
+│   ├── chat/                   # Multilingual AI Advisory Interface
+│   ├── dashboard/              # AI Control Centre & Weather Telemetry
+│   ├── diagnosis/              # Crop Vision Disease Scanner
+│   ├── schemes/                # Government Schemes Portal
+│   ├── weather/                # Weather Intelligence Dashboard
+│   ├── layout.tsx              # Root Layout & Typography
+│   └── page.tsx                # SaaS Landing Page & Workflow
+├── components/                 # Reusable React UI Components (Navbar, Footer, WhatsAppCard)
+├── lib/                        # API Client & Host Autodetect
+├── services/                   # Frontend Agrolith Service Layer
+├── tests/                      # Pytest Test Suite (27/27 Test Cases Passing)
+├── Dockerfile                  # Production Multi-Stage Dockerfile
+├── railway.json                # Railway Nixpacks Deployment Configuration
+├── vercel.json                 # Vercel Production Build Specification
+├── requirements.txt            # Python Dependencies
+├── package.json                # Next.js Frontend Dependencies
+└── README.md                   # Project Documentation
 ```
 
 ---
 
-## 📱 Meta WhatsApp Cloud API Setup Guide
+## 🚀 Quick Start Guide
 
-### Step 1: Create Meta Developer App
-1. Go to [Meta for Developers](https://developers.facebook.com/) and log in.
-2. Click **My Apps** → **Create App**.
-3. Select **Other** → **Business** as app type.
-4. Add **WhatsApp** product to your app.
+### Prerequisites
 
-### Step 2: Obtain API Credentials
-1. Under **WhatsApp** → **API Setup**:
-   - Copy **Temporary Access Token** (or create a permanent System User Token under Business Settings).
-   - Copy **Phone Number ID**.
-2. Add test recipient phone numbers to your WhatsApp sandbox.
+- **Node.js**: v18.0 or higher
+- **Python**: 3.11 or higher
+- **Git**: Installed
 
-### Step 3: Configure Environment Variables
-Add the following credentials to your `.env` file:
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/sivatejagalla/Agrolith-AI.git
+cd Agrolith-AI
+```
+
+### 2. Frontend Setup (Next.js 15)
+
+```bash
+# Install frontend dependencies
+npm install
+
+# Start local Next.js development server
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`.
+
+### 3. Backend Setup (FastAPI)
+
+```bash
+# Create and activate Python virtual environment
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+
+# Install backend dependencies
+pip install -r requirements.txt
+
+# Launch FastAPI development server
+python -m uvicorn main:app --reload --port 8000
+```
+
+The FastAPI backend will be available at `http://127.0.0.1:8000` with Swagger UI at `http://127.0.0.1:8000/docs`.
+
+---
+
+## ⚙️ Environment Configuration
+
+Create a `.env` file in the root directory using the template below:
+
 ```ini
-WHATSAPP_TOKEN="your-meta-access-token"
-PHONE_NUMBER_ID="your-whatsapp-phone-number-id"
+# Frontend Environment
+NEXT_PUBLIC_API_BASE_URL=https://web-production-75741.up.railway.app/api/v1
+NEXT_PUBLIC_BACKEND_URL=https://web-production-75741.up.railway.app
+NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER=919000000000
+
+# Backend Server Settings
+PROJECT_NAME="Agrolith-AI Production Backend"
+SECRET_KEY="your_jwt_secret_key"
+GEMINI_API_KEY="your_google_gemini_api_key"
+
+# Meta WhatsApp Cloud API
+WHATSAPP_TOKEN="your_meta_access_token"
+PHONE_NUMBER_ID="your_whatsapp_phone_number_id"
+WHATSAPP_BUSINESS_ACCOUNT_ID="your_whatsapp_business_account_id"
 VERIFY_TOKEN="agrolith_whatsapp_verify_token_2026"
 ```
 
-### Step 4: Expose Local Backend to Internet (Development)
-Use ngrok or localtunnel to expose port 8000:
+---
+
+## 🧪 Testing
+
+The repository includes a comprehensive automated test suite powering **100% test coverage**:
+
 ```bash
-ngrok http 8000
-```
-Copy your HTTPS forwarding URL (e.g. `https://abc1234.ngrok-free.app`).
-
-### Step 5: Configure Meta Webhook
-1. In Meta Developer Console → **WhatsApp** → **Configuration**:
-   - Click **Edit Webhook**.
-   - **Callback URL**: `https://abc1234.ngrok-free.app/api/v1/whatsapp/webhook`
-   - **Verify Token**: `agrolith_whatsapp_verify_token_2026` (matches `VERIFY_TOKEN` in `.env`).
-2. Click **Verify and Save**. FastAPI will automatically verify Meta's challenge string.
-3. Under **Webhook Fields**, subscribe to `messages`.
-
----
-
-## 📲 How WhatsApp AI Features Work
-
-| Farmer Message Type | Processing Logic & AI Services Used |
-|---------------------|-------------------------------------|
-| **💬 Text Query** | Auto-detects language (`language_service`), routes by intent (Weather, Mandi Prices, Schemes, Soil, or Gemini Advisory), translates response to native language, saves turn in `chat_memory_service`. |
-| **📷 Crop Photo** | Downloads photo from Meta Graph API, converts to base64, passes to Gemini Vision (`crop_disease_service`), generates diagnosis (disease name, severity, organic & chemical treatments), sends formatted report. |
-| **🎙️ Voice Note** | Downloads audio, converts to transcript text using Gemini STT (`speech_service`), processes query, generates AI reply, synthesizes audio MP3 (`gTTS`), sends transcript + audio reply back. |
-| **📄 Document / Report** | Downloads PDF/Image report, analyzes soil pH and nutrient deficiencies (`soil_health_service`), sends structured amendment advisory. |
-
----
-
-## API Endpoints Reference
-
-### 🏥 Health & Webhooks
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/api/v1/health` | Service health check & metadata |
-| GET | `/api/v1/whatsapp/webhook` | Automatic GET webhook verification for Meta Cloud API |
-| POST | `/api/v1/whatsapp/webhook` | Meta Cloud API webhook event receiver (background task dispatch) |
-
-### 🔐 Authentication (`/api/v1/auth`)
-| Method | URL | Description |
-|--------|-----|-------------|
-| POST | `/api/v1/auth/register` | Register new user (email + password) |
-| POST | `/api/v1/auth/login` | Login → JWT access token |
-| GET | `/api/v1/auth/me` | Get authenticated user profile |
-
-### 🤖 AI Advisory (`/api/v1/ai`)
-| Method | URL | Description |
-|--------|-----|-------------|
-| POST | `/api/v1/ai/query` | Unified farmer advisory (text/voice, multilingual) |
-| POST | `/api/v1/ai/tts` | Text → base64 MP3 audio (gTTS) |
-| POST | `/api/v1/ai/stt` | Base64 audio → transcript (Gemini Audio) |
-| GET | `/api/v1/ai/weather` | Live weather + farming advice (`?lat=...&lon=...`) |
-
-### 🌾 Agriculture Intelligence (`/api/v1/agri`)
-| Method | URL | Description |
-|--------|-----|-------------|
-| POST | `/api/v1/agri/disease-detection` | Crop disease detection from base64 image (Gemini Vision) |
-| POST | `/api/v1/agri/market-price` | Mandi market price + selling advisory |
-| POST | `/api/v1/agri/schemes` | Government scheme matching (PM-KISAN, PMFBY, etc.) |
-| POST | `/api/v1/agri/soil-health` | Soil pH + deficiency + organic amendment advisory |
-
----
-
-## Testing
-```bash
-# Run complete backend test suite (includes WhatsApp tests)
+# Run the complete Pytest backend test suite
 python -m pytest tests/ -v
 ```
+
+---
+
+## 📖 API Endpoints Reference
+
+### 🏥 Health & Webhooks
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/health` | Server health check & status metadata |
+| `GET` | `/api/v1/whatsapp/webhook` | Meta WhatsApp Cloud API webhook challenge verification |
+| `POST` | `/api/v1/whatsapp/webhook` | Meta WhatsApp event receiver (async background processing) |
+
+### 🤖 AI Advisory (`/api/v1/ai`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/ai/query` | Unified farmer advisory (Multilingual text/voice Q&A) |
+| `POST` | `/api/v1/ai/tts` | Text-to-speech audio synthesis (base64 MP3 output) |
+| `POST` | `/api/v1/ai/stt` | Speech-to-text base64 audio transcription |
+| `GET` | `/api/v1/ai/weather` | Live Open-Meteo weather & crop advisory (`?lat=...&lon=...`) |
+
+### 🌾 Agriculture Intelligence (`/api/v1/agri`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/agri/disease-detection` | Plant vision disease analysis (Gemini Vision) |
+| `POST` | `/api/v1/agri/market-price` | Mandi market price & selling advisory |
+| `POST` | `/api/v1/agri/schemes` | Government scheme matching (*PM-KISAN*, *PMFBY*) |
+| `POST` | `/api/v1/agri/soil-health` | Soil pH interpretation & organic remedies |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/amazing-feature`).
+3. Commit your changes (`git commit -m 'Add amazing feature'`).
+4. Push to the branch (`git push origin feature/amazing-feature`).
+5. Open a Pull Request.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
