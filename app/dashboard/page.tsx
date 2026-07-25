@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Sun, DollarSign, Layers, Activity, Sparkles, ArrowRight, ShieldCheck, TrendingUp, AlertCircle, Droplets, Wind, CloudRain, Sunrise, Sunset, Eye, CheckCircle2 } from 'lucide-react';
 import { AgrolithService } from '@/services/agrolith-service';
 import { WeatherResponse, MarketPriceResponse, SoilHealthResponse } from '@/types/api';
+import { WhatsAppCard } from '@/components/whatsapp-card';
 
 export default function DashboardPage() {
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
@@ -226,6 +227,9 @@ export default function DashboardPage() {
         </div>
 
       </div>
+
+      {/* Meta WhatsApp Integration Card */}
+      <WhatsAppCard />
 
     </div>
   );

@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     WHATSAPP_TOKEN: str = ""
     PHONE_NUMBER_ID: str = ""
     VERIFY_TOKEN: str = "agrolith_whatsapp_verify_token_2026"
+    WHATSAPP_PHONE_NUMBER: str = "919000000000"
 
     @field_validator("BACKEND_CORS_ORIGINS", "SUPPORTED_LANGUAGES", mode="before")
     @classmethod
