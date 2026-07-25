@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Cpu, Activity, Menu, X, User, LayoutDashboard, Scan, Sun, Award, Sparkles } from 'lucide-react';
+import { Cpu, Activity, Menu, X, User, LayoutDashboard, Scan, Sun, Award, Sparkles, MessageCircle } from 'lucide-react';
 import { detectBackendHost } from '@/lib/api';
 
 export function Navbar() {
@@ -27,6 +27,8 @@ export function Navbar() {
     { href: '/weather', label: 'Weather Intel', icon: Sun },
     { href: '/schemes', label: 'Govt Schemes', icon: Award },
   ];
+
+  const whatsappUrl = "https://wa.me/916281728227?text=Hello,%20I%20want%20to%20know%20more%20about%20Agrolith-AI!";
 
   return (
     <header className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-3.5 backdrop-blur-xl">
@@ -67,6 +69,17 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          {/* WhatsApp Direct Action Button right beside Govt Schemes */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-heading font-bold text-emerald-400 hover:text-white hover:bg-emerald-500/20 border border-emerald-500/30 transition-all duration-300"
+          >
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>WhatsApp</span>
+          </a>
         </nav>
 
         {/* Status Badge & Profile Action */}
@@ -112,6 +125,17 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30"
+          >
+            <MessageCircle className="w-4 h-4 text-emerald-400" />
+            <span>WhatsApp Assistant</span>
+          </a>
         </div>
       )}
     </header>
