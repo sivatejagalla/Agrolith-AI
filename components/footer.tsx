@@ -34,8 +34,8 @@ export function Footer() {
           <h4 className="font-heading text-sm font-bold text-emerald-400 uppercase tracking-wider mb-4">Intelligence</h4>
           <ul className="space-y-2 text-xs text-gray-400">
             <li><Link href="/schemes" className="hover:text-white transition-colors">PM-KISAN & PKVY Schemes</Link></li>
-            <li><a href="http://127.0.0.1:8000/docs" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">FastAPI Swagger UI (/docs)</a></li>
-            <li><a href="http://127.0.0.1:8000/api/v1/health" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Health Metadata API</a></li>
+            <li><a href="https://web-production-75741.up.railway.app/docs" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">FastAPI Swagger UI (/docs)</a></li>
+            <li><a href="https://web-production-75741.up.railway.app/api/v1/health" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Health Metadata API</a></li>
           </ul>
         </div>
 

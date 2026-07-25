@@ -1,17 +1,20 @@
 import axios from 'axios';
 
+// Production Railway Backend URL
+export const PRODUCTION_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://web-production-75741.up.railway.app/api/v1';
+
 // API Base Endpoints with Fallback Sequence
 export const API_BASE_CANDIDATES = [
-  'http://127.0.0.1:8000/api/v1',
-  'https://agrolith-backend.up.railway.app/api/v1',
-  'https://agrolith-backend.onrender.com/api/v1'
+  PRODUCTION_BACKEND_URL,
+  'https://web-production-75741.up.railway.app/api/v1',
+  'http://127.0.0.1:8000/api/v1'
 ];
 
 export let activeApiBase = API_BASE_CANDIDATES[0];
 
 export const apiClient = axios.create({
   baseURL: activeApiBase,
-  timeout: 10000,
+  timeout: 12000,
   headers: {
     'Content-Type': 'application/json',
   },
