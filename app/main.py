@@ -88,12 +88,28 @@ def create_application() -> FastAPI:
     async def favicon_endpoint():
         return JSONResponse(status_code=204, content={})
 
+    # Interactive Web Demo Preview Endpoint
+    @application.get("/demo", tags=["Demo Preview"])
+    async def demo_preview():
+        from fastapi.responses import FileResponse
+        static_demo_path = os.path.join(os.path.dirname(__file__), "static", "demo.html")
+        if os.path.exists(static_demo_path):
+            return FileResponse(static_demo_path)
+        return {"message": "Demo preview static file not found"}
+
     # Root and Health check endpoints
-    @application.get("/", tags=["Health"])
     @application.get("/health", tags=["Health"])
     @application.get(f"{settings.API_V1_STR}", tags=["Health"])
     @application.get(f"{settings.API_V1_STR}/", tags=["Health"])
     async def root_health_check():
+        return {"status": "healthy", "project_name": settings.PROJECT_NAME, "version": settings.VERSION}
+
+    @application.get("/", tags=["Health"])
+    async def root_index():
+        from fastapi.responses import FileResponse
+        static_demo_path = os.path.join(os.path.dirname(__file__), "static", "demo.html")
+        if os.path.exists(static_demo_path):
+            return FileResponse(static_demo_path)
         return {"status": "healthy", "project_name": settings.PROJECT_NAME, "version": settings.VERSION}
 
     return application
