@@ -3,8 +3,8 @@ import axios from 'axios';
 // API Base Endpoints with Fallback Sequence
 export const API_BASE_CANDIDATES = [
   'http://127.0.0.1:8000/api/v1',
-  'https://krishimitra-backend.up.railway.app/api/v1',
-  'https://krishimitra-backend.onrender.com/api/v1'
+  'https://agrolith-backend.up.railway.app/api/v1',
+  'https://agrolith-backend.onrender.com/api/v1'
 ];
 
 export let activeApiBase = API_BASE_CANDIDATES[0];
