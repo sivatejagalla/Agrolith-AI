@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Leaf, Upload, Camera, ShieldCheck, CheckCircle2, AlertTriangle, Sparkles, RefreshCw } from 'lucide-react';
+import { Leaf, Upload, Camera, ShieldCheck, CheckCircle2, AlertTriangle, Sparkles, RefreshCw, Download } from 'lucide-react';
 import { AgrolithService } from '@/services/agrolith-service';
 import { DiseaseDiagnosisResponse } from '@/types/api';
 
@@ -26,13 +26,25 @@ export default function DiagnosisPage() {
     setIsAnalyzing(false);
   };
 
+  const downloadReport = () => {
+    if (!diagnosisResult) return;
+    const content = `AGROLITH-AI PLANT VISION DIAGNOSTIC REPORT\n=========================================\nCrop: ${diagnosisResult.crop_name}\nDisease Identified: ${diagnosisResult.disease_name}\nConfidence Score: ${diagnosisResult.confidence_score}%\nSeverity: ${diagnosisResult.severity}\n\nORGANIC BIO-TREATMENT:\n- ${diagnosisResult.organic_treatments.join('\n- ')}\n\nFIELD PREVENTION TIPS:\n- ${diagnosisResult.prevention_tips.join('\n- ')}\n`;
+    const element = document.createElement('a');
+    const file = new Blob([content], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `diagnosis-report-${diagnosisResult.crop_name.toLowerCase()}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
       
       {/* Header */}
       <div className="glass-panel p-6 rounded-2xl border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-black text-white">Crop Disease Vision Scanner</h1>
+          <h1 className="font-display text-3xl font-black text-white">Vision Disease Scanner</h1>
           <p className="text-xs text-gray-400 mt-1">Google Gemini AI plant vision lesion analysis and organic treatment prescriptions.</p>
         </div>
         <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-400">
@@ -60,7 +72,7 @@ export default function DiagnosisPage() {
                   }}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     selectedSample === sample.crop
-                      ? 'bg-emerald-500/20 border-emerald-400 text-white'
+                      ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-glow'
                       : 'bg-graphite-900/60 border-white/10 text-gray-300 hover:border-emerald-500/40'
                   }`}
                 >
@@ -75,13 +87,13 @@ export default function DiagnosisPage() {
           {/* Upload Area */}
           <div className="glass-panel p-6 rounded-2xl border-white/10 space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-heading font-bold text-gray-300">Crop Name:</label>
+              <label className="text-xs font-heading font-bold text-gray-300">Target Crop Name:</label>
               <input
                 type="text"
                 value={cropInput}
                 onChange={(e) => setCropInput(e.target.value)}
                 placeholder="e.g. Paddy / Tomato / Cotton"
-                className="w-full bg-graphite-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400"
+                className="w-full bg-graphite-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400 font-medium"
               />
             </div>
 
@@ -89,7 +101,7 @@ export default function DiagnosisPage() {
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto">
                 <Upload className="w-6 h-6" />
               </div>
-              <div className="text-xs font-bold text-gray-300">Drag & Drop Plant Image Here</div>
+              <div className="text-xs font-bold text-gray-300">Drag & Drop Plant Leaf Photo</div>
               <div className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP (Max 10MB)</div>
             </div>
 
@@ -117,10 +129,22 @@ export default function DiagnosisPage() {
         {/* Diagnosis Results Display */}
         <div className="lg:col-span-7">
           <div className="glass-panel p-6 md:p-8 rounded-2xl border-white/10 space-y-6 h-full">
-            <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
-              <span>Vision Diagnostic Report</span>
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <span>Vision Diagnostic Report</span>
+              </h2>
+
+              {diagnosisResult && (
+                <button
+                  onClick={downloadReport}
+                  className="inline-flex items-center gap-1.5 bg-graphite-800 hover:bg-graphite-700 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-bold text-gray-200"
+                >
+                  <Download className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Download Report</span>
+                </button>
+              )}
+            </div>
 
             {diagnosisResult ? (
               <div className="space-y-6">
@@ -128,7 +152,7 @@ export default function DiagnosisPage() {
                 {/* Status Badges */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div className="bg-graphite-900/80 p-3.5 rounded-xl border border-white/10">
-                    <div className="text-[10px] text-gray-400 font-bold uppercase">Confidence Meter</div>
+                    <div className="text-[10px] text-gray-400 font-bold uppercase">Confidence Score</div>
                     <div className="font-display text-xl font-extrabold text-emerald-400 mt-0.5">
                       {diagnosisResult.confidence_score}%
                     </div>
@@ -149,9 +173,9 @@ export default function DiagnosisPage() {
                   </div>
                 </div>
 
-                {/* Identified Disease Name */}
+                {/* Pathogen Name */}
                 <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1">
-                  <div className="text-xs font-bold text-amber-400">Pathogen / Disease Identified:</div>
+                  <div className="text-xs font-bold text-amber-400">Pathogen Identified:</div>
                   <div className="font-display text-lg font-bold text-white">
                     {diagnosisResult.disease_name}
                   </div>
@@ -170,7 +194,7 @@ export default function DiagnosisPage() {
                   </ul>
                 </div>
 
-                {/* Prevention Tips */}
+                {/* Prevention Guidelines */}
                 <div className="space-y-2">
                   <div className="text-xs font-heading font-bold text-cyan-400 uppercase tracking-wider">🛡️ Field Prevention Guidelines:</div>
                   <ul className="space-y-2 text-xs text-gray-300">
@@ -187,7 +211,7 @@ export default function DiagnosisPage() {
             ) : (
               <div className="py-16 text-center text-gray-500 space-y-3">
                 <Leaf className="w-12 h-12 mx-auto text-gray-600 animate-pulse" />
-                <p className="text-sm">Click a sample leaf card or upload an image to run Gemini AI Vision diagnosis.</p>
+                <p className="text-xs">Click a sample leaf card or upload an image to run Gemini AI Vision diagnosis.</p>
               </div>
             )}
           </div>

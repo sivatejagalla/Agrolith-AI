@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Cpu, Send, Sparkles, User, Image as ImageIcon, Copy, Check } from 'lucide-react';
+import { Cpu, Send, Sparkles, User, Copy, Check, Download, RefreshCw, Volume2, Mic, Globe } from 'lucide-react';
 import { AgrolithService } from '@/services/agrolith-service';
 
 interface ChatMessage {
@@ -24,6 +24,7 @@ export default function ChatPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<string>('English');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
@@ -59,6 +60,22 @@ export default function ChatPage() {
     setIsLoading(false);
   };
 
+  const copyToClipboard = (id: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const downloadResponse = (text: string) => {
+    const element = document.createElement('a');
+    const file = new Blob([text], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `agrolith-ai-advisory-${Date.now()}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   const presetPrompts = [
     '🌾 How to cure rice blast in paddy crop organically?',
     '🌱 Best bio-fertilizers for wheat crop in acidic soil?',
@@ -77,17 +94,17 @@ export default function ChatPage() {
           </div>
           <div>
             <h1 className="font-display text-lg font-bold text-white">Multilingual Gemini AI Advisory</h1>
-            <p className="text-xs text-gray-400">Google Gemini 1.5 Flash Engine</p>
+            <p className="text-xs text-gray-400">Google Gemini 1.5 Flash Engine • ChatGPT/Gemini UI</p>
           </div>
         </div>
 
         {/* Language Switcher */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400 font-semibold hidden sm:inline">Language:</span>
+          <Globe className="w-4 h-4 text-emerald-400 hidden sm:inline" />
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="bg-graphite-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+            className="bg-graphite-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400 font-bold"
           >
             <option value="English">English</option>
             <option value="Hindi">हिंदी (Hindi)</option>
@@ -104,13 +121,13 @@ export default function ChatPage() {
         {/* Preset Prompt Chips */}
         {messages.length <= 1 && (
           <div className="space-y-2 mb-6">
-            <div className="text-xs font-heading font-bold text-gray-400">Suggested One-Click Prompts:</div>
+            <div className="text-xs font-heading font-bold text-gray-400">Suggested Prompts:</div>
             <div className="flex flex-wrap gap-2">
               {presetPrompts.map((prompt, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(prompt)}
-                  className="bg-graphite-900/80 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/40 text-xs text-emerald-300 px-3.5 py-2 rounded-xl transition-all text-left"
+                  className="bg-graphite-900/80 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/40 text-xs text-emerald-300 px-3.5 py-2 rounded-xl transition-all text-left shadow-glow"
                 >
                   {prompt}
                 </button>
@@ -137,20 +154,45 @@ export default function ChatPage() {
               {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
             </div>
 
-            <div
-              className={`p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                msg.sender === 'user'
-                  ? 'bg-emerald-600/90 text-white border border-emerald-500/30'
-                  : 'bg-graphite-900/90 text-gray-200 border border-white/10'
-              }`}
-            >
-              {msg.text}
-              <div className="text-[10px] text-gray-400 mt-2 text-right">{msg.timestamp}</div>
+            <div className="space-y-2 max-w-2xl">
+              <div
+                className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
+                  msg.sender === 'user'
+                    ? 'bg-emerald-600/90 text-white border border-emerald-500/30'
+                    : 'bg-graphite-900/90 text-gray-200 border border-white/10 shadow-glow'
+                }`}
+              >
+                {msg.text}
+                <div className="text-[10px] text-gray-400 mt-2 text-right">{msg.timestamp}</div>
+              </div>
+
+              {/* Action Toolbar for AI Messages */}
+              {msg.sender === 'assistant' && (
+                <div className="flex items-center gap-2 pl-1 text-[11px] text-gray-400">
+                  <button
+                    onClick={() => copyToClipboard(msg.id, msg.text)}
+                    className="flex items-center gap-1 hover:text-emerald-400 transition-colors"
+                  >
+                    {copiedId === msg.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedId === msg.id ? 'Copied' : 'Copy'}</span>
+                  </button>
+
+                  <span>•</span>
+
+                  <button
+                    onClick={() => downloadResponse(msg.text)}
+                    className="flex items-center gap-1 hover:text-cyan-400 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
 
-        {/* Typing Loading Indicator */}
+        {/* Typing Indicator */}
         {isLoading && (
           <div className="flex items-center gap-3 text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20 max-w-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -169,12 +211,22 @@ export default function ChatPage() {
         }}
         className="mt-4 flex items-center gap-3 glass-panel p-2 rounded-2xl border-white/10"
       >
+        <button
+          type="button"
+          onClick={() => setIsRecording(!isRecording)}
+          className={`p-3 rounded-xl border transition-all ${
+            isRecording ? 'bg-red-500/20 border-red-500 text-red-400 animate-pulse' : 'bg-graphite-900 border-white/10 text-gray-400 hover:text-white'
+          }`}
+        >
+          <Mic className="w-4 h-4" />
+        </button>
+
         <input
           type="text"
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
           placeholder="Ask Agrolith AI any crop, fertilizer, pest, or soil health question..."
-          className="flex-1 bg-transparent px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none"
+          className="flex-1 bg-transparent px-4 py-2.5 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none"
         />
 
         <button

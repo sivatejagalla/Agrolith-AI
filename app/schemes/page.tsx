@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, ExternalLink, ShieldCheck, Award } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, ExternalLink, ShieldCheck, Award, FileText, CheckCircle2, Calendar } from 'lucide-react';
 import { GovernmentScheme } from '@/types/api';
 
 export default function SchemesPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [expandedId, setExpandedId] = useState<string | null>('pm-kisan');
 
   const schemes: GovernmentScheme[] = [
@@ -52,9 +51,8 @@ export default function SchemesPage() {
   ];
 
   const filteredSchemes = schemes.filter((s) => {
-    const matchesSearch = s.scheme_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    return s.scheme_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.benefit_description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
   });
 
   return (
@@ -68,11 +66,11 @@ export default function SchemesPage() {
         </div>
         <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-400">
           <Award className="w-4 h-4" />
-          <span>Verified Schemes</span>
+          <span>Verified Govt Portal</span>
         </div>
       </div>
 
-      {/* Search Controls */}
+      {/* Search Input */}
       <div className="glass-panel p-4 rounded-2xl border-white/10 flex items-center gap-4">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
@@ -81,7 +79,7 @@ export default function SchemesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search schemes by keyword (e.g. PM-KISAN, Organic, Insurance)..."
-            className="w-full bg-graphite-900 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-400"
+            className="w-full bg-graphite-900 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-400"
           />
         </div>
       </div>
@@ -93,57 +91,66 @@ export default function SchemesPage() {
           return (
             <div key={scheme.scheme_id} className="glass-panel rounded-2xl border-white/10 overflow-hidden transition-all">
               
-              {/* Card Header */}
+              {/* Header Bar */}
               <div
                 onClick={() => setExpandedId(isExpanded ? null : scheme.scheme_id)}
                 className="p-6 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
               >
                 <div className="space-y-1">
-                  <div className="text-xs font-bold text-emerald-400">{scheme.ministry}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-emerald-400">{scheme.ministry}</span>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full">Active Scheme</span>
+                  </div>
                   <h3 className="font-display text-lg font-bold text-white">{scheme.scheme_name}</h3>
                   <p className="text-xs text-gray-400">{scheme.benefit_description}</p>
                 </div>
                 <div className="p-2 text-gray-400 hover:text-white">
-                  {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  {isExpanded ? <ChevronUp className="w-5 h-5 text-emerald-400" /> : <ChevronDown className="w-5 h-5" />}
                 </div>
               </div>
 
-              {/* Expanded Card Details */}
+              {/* Expanded Scheme Details */}
               {isExpanded && (
                 <div className="p-6 border-t border-white/10 bg-graphite-900/60 space-y-6">
                   
                   {/* Eligibility */}
                   <div className="space-y-2">
                     <div className="text-xs font-heading font-bold text-amber-400 uppercase tracking-wider">Eligibility Criteria:</div>
-                    <ul className="list-disc list-inside text-xs text-gray-300 space-y-1">
+                    <ul className="space-y-1.5 text-xs text-gray-300">
                       {scheme.eligibility.map((item, idx) => (
-                        <li key={idx}>{item}</li>
+                        <li key={idx} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>{item}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Documents Required */}
+                  {/* Required Documents */}
                   <div className="space-y-2">
                     <div className="text-xs font-heading font-bold text-cyan-400 uppercase tracking-wider">Required Documents:</div>
-                    <ul className="list-disc list-inside text-xs text-gray-300 space-y-1">
+                    <ul className="space-y-1.5 text-xs text-gray-300">
                       {scheme.documents_required.map((item, idx) => (
-                        <li key={idx}>{item}</li>
+                        <li key={idx} className="flex items-center gap-2">
+                          <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <span>{item}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Action Links */}
-                  <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-white/10">
+                  {/* Action Bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
                     <a
                       href={scheme.official_website}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-glow"
+                      className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-glow"
                     >
-                      <span>Visit Official Portal</span>
+                      <span>Visit Official Government Portal</span>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
-                    <span className="text-xs text-gray-400">Helpline: <strong>{scheme.helpline}</strong></span>
+                    <span className="text-xs text-gray-400">Toll-Free Helpline: <strong className="text-white">{scheme.helpline}</strong></span>
                   </div>
 
                 </div>
